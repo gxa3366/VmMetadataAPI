@@ -7,6 +7,7 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
+using Newtonsoft.Json;
 
 namespace VM
 {
@@ -19,14 +20,24 @@ namespace VM
 
         public static async Task  GetMetadata()
         {
+            KeyVaultSecret secret;
             var client = new SecretClient(new Uri("https://myappkeyvault02.vault.azure.net"), new DefaultAzureCredential());
-            var secret = client.GetSecret("secretName").Value;
-            string tenantId = "c3595f37-8e9d-4988-b294-892bea17912b";
-            string clientId = "d7dbb159-ee9a-4143-809f-6fd1e55d4fa7"; 
-            string clientSecret = "lkI8Q~oJT140p4sROgUdbwbaxo0tL~7jDVdUKc~k";
-            string subscriptionId = "efe469ef-6c58-45d6-a6bf-f517fbe5c50c";
-            string resourceGroupName = "TechDemo";
-            string vmName = "azv001";
+
+            secret= client.GetSecret("secretName");
+            string secrets = secret.Value;
+            secret = client.GetSecret("tenantId");
+            string tenantId = secret.Value;
+            secret = client.GetSecret("clientId");
+            string clientId = secret.Value;
+            secret = client.GetSecret("clientSecret");
+            string clientSecret = secret.Value;
+            secret = client.GetSecret("subscriptionId");
+            string subscriptionId = secret.Value;
+            secret = client.GetSecret("resourceGroupName");
+            string resourceGroupName = secret.Value;
+            secret = client.GetSecret("vmName");
+            string vmName = secret.Value;
+            
             var app = ConfidentialClientApplicationBuilder.Create(clientId).WithClientSecret(clientSecret).WithTenantId(tenantId).Build();
             var authResult = await app.AcquireTokenForClient(new string[] {
     "https://management.azure.com/.default"
